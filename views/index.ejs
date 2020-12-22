@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<title>My Akinator</title>
+<script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.min.js"></script>
+<link href="//use.fontawesome.com/releases/v5.8.1/css/all.css" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+<link rel="shortcut icon" href="/icon.png" type="image/png"/>
+<link rel="icon" href="/icon.png" type="image/png"/>
+<link rel="apple-touch-icon" href="/icon.png"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="My Akinator"/>
+
+<!-- // OGP tags -->
+<meta property="og:title" content="My Akinator"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://myakinator.mybluemix.net/"/>
+<meta property="og:image" content="https://myakinator.mybluemix.net/icon.png"/>
+<meta property="og:site_name" content="My Akinator"/>
+<meta property="og:description" content="My Akinator : いらすとや版アキネーター"/>
+<!-- OGP tags // -->
+
+<!-- // Twitter Card -->
+<meta property="twitter:card" content="summary"/>
+<meta property="twitter:site" content="@dotnsf"/>
+<meta property="twitter:creator" content="@dotnsf"/>
+<meta property="twitter:url" content="https://myakinator.mybluemix.net/"/>
+<meta property="twitter:image" content="https://myakinator.mybluemix.net/icon.png"/>
+<meta property="twitter:title" content="My Akinator"/>
+<meta property="twitter:description" content="My Akinator : いらすとや版アキネーター"/>
+<!-- Twitter Card // -->
+
+<style type="text/css">
+html, body{
+  text-align: center;
+  background-color: #fafafa;
+  font-size: 20px;
+  color: #333;
+}
+
+/* https://blog.codecamp.jp/css_balloon */
+/* 吹き出し本体 */
+.balloon{
+  position: relative;
+  padding: 20px;
+  background-color: #fff3ad;
+  display: inline-block;
+}
+
+/* beforeで三角を表現 */
+.balloon::before{
+  content: '';
+  position: absolute;
+  display: block;
+  left: 20px;
+  bottom: -15px;
+  width: 0;
+  height: 0;
+  border-top: 15px solid #fff3ad;
+  border-right: 15px solid transparent;
+  border-left: 15px solid transparent;
+}
+.mybtn{
+  margin: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="balloon" id="balloon">
+    私はアキネーター。ただいま準備中・・・
+  </div>
+  <div>
+    <img src="<%= settings.majin_img_url %>"/>
+  </div>
+</div>
+
+<div class="modal bd-example-modal-lg fade" id="myModal" tabindex="-1" role="dialog" aria-labbelledby="myModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">この人ですか？</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="mymodal-body">
+      </div>
+      <div class="modal-footer btn-center">
+        <button class="btn btn-xs btn-success mybtn" onClick="gameAgain();">もう一度</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var did = generateUUID();
+console.log( 'did = ' + did );
+
+var base_url = location.origin + '/';
+
+$(function(){
+  //. ヒストリバック無効化
+  if( window.history && window.history.pushState ){
+    history.pushState( "nohb", null, null );
+    $(window).on( "popState", function( evt ){
+      if( !event.originalEvent.state ){
+        history.pushState( "nohb", null, null );
+        return;
+      }
+    });
+  }
+
+  init();
+});
+
+function init(){
+  if( did ){
+  }
+}
+
+function isMobileSafari(){
+  return ( navigator.userAgent.indexOf( 'Safari' ) > 0 && navigator.userAgent.indexOf( 'Mobile' ) > 0 );
+}
+
+function generateUUID(){
+  //. Cookie の値を調べて、有効ならその値で、空だった場合は生成する
+  cookies = document.cookie.split(";");
+  for( var i = 0; i < cookies.length; i ++ ){
+    var str = cookies[i].split("=");
+    var une = unescape( str[0] );
+    if( une == " deviceid" || une == "deviceid" ){
+      did = unescape( unescape( str[1] ) );
+    }
+  }
+
+  if( did == null ){
+    var s = 1000;
+    did = ( new Date().getTime().toString(16) ) + Math.floor( s * Math.random() ).toString(16);
+  }
+
+  //if( isMobileSafari() ){
+    $.ajax({
+      url: '/setcookie',
+      type: 'POST',
+      data: { did: did },
+      success: function( msg ){
+        //console.log( 'msg', msg );
+        // msg = { status: true, did: 'xxxx', progress: 0, question: 'XXXX?', answers: [] }
+        displayMessage( msg );
+      },
+      error: function( e0, e1, e2 ){
+      }
+    });
+    /*
+  }else{
+    var dt = new Date();
+    var ts = dt.getTime();
+    ts += 1000 * 60 * 60 * 24 * 365 * 100; //. 100 years
+    dt.setTime( ts );
+    var value = ( "deviceid=" + did + '; expires=' + dt.toUTCString() + '; path=/' );
+    document.cookie = ( value );
+  }
+  */
+
+  return did;
+}
+
+function timestamp2datetime( ts ){
+  if( ts ){
+    var dt = new Date( ts );
+    var yyyy = dt.getFullYear();
+    var mm = dt.getMonth() + 1;
+    var dd = dt.getDate();
+    var hh = dt.getHours();
+    var nn = dt.getMinutes();
+    var ss = dt.getSeconds();
+    var datetime = yyyy + '-' + ( mm < 10 ? '0' : '' ) + mm + '-' + ( dd < 10 ? '0' : '' ) + dd
+      + ' ' + ( hh < 10 ? '0' : '' ) + hh + ':' + ( nn < 10 ? '0' : '' ) + nn + ':' + ( ss < 10 ? '0' : '' ) + ss;
+    return datetime;
+  }else{
+    return "";
+  }
+}
+
+function displayMessage( msg ){
+  console.log( 'diplayMessage', msg );
+  // msg = { status: true, did: 'xxxx', step: n, progress: m, question: 'XXXX?', answers: [] }
+  if( msg ){
+    if( msg.progress < <%= settings.eligible %> ){
+      var btn_order = [ 0, 3, 2, 4, 1 ];
+      var html = '[' + msg.step + '] ' + msg.question + '<br/>';
+      for( var i = 0; i < btn_order.length; i ++ ){
+        var btn = '<button class="btn btn-xs btn-primary mybtn" onClick="selectAnswer(' + btn_order[i] + ');">' + msg.answers[btn_order[i]] + '</button>';
+        html += btn;
+      }
+      $('#balloon').html( html );
+    }else{
+      console.log( msg.answers );
+      var html = msg.answers[0].name + '(' + msg.answers[0].description + ') と判断しました。<br/>'
+        + '<img src="' + msg.answers[0].absolute_picture_path + '"/><br/><br/>'
+        + '他の回答候補<br/>'
+        + '<table class="table-bordered">'
+        + '<thead>'
+        + '<tr><th>#</th><th>name</th><th>desc</th><th>確率</th></tr>'
+        + '</thead>'
+        + '<tbody>';
+      for( var i = 0; i < msg.answers.length; i ++ ){
+        var a = msg.answers[i];
+        html += '<tr><td>' + i + '</td><td>' + a.name + '</td><td>' + a.description + '</td><td>' + a.proba + '</td></tr>';
+      }
+      html += '</tbody></table>';
+      $('#mymodal-body').html( html );
+      $('#myModal').modal();
+    }
+  }else{
+    var html = 'エラー';
+    $('#balloon').html( html );
+  }
+}
+
+function selectAnswer( answer ){
+  $.ajax({
+    url: '/answer?did=' + did,
+    type: 'POST',
+    data: { answer: answer },
+    success: function( msg ){
+      displayMessage( msg );
+    },
+    error: function( e0, e1, e2 ){
+    }
+  });
+}
+
+function gameAgain(){
+  $('#myModal').modal( 'hide' );
+  $('#balloon').html( '' );
+  did = generateUUID();
+}
+</script>
+</body>
+</html>
