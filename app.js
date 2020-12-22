@@ -189,15 +189,36 @@ app.post( '/stop', async function( req, res ){
   }
 });
 
+app.post( '/reset', async function( req, res ){
+  res.contentType( 'application/json; charset=utf-8' );
+  var did = req.query.did;
+
+  if( did ){
+    if( akinators[did] ){
+      akinators[did] = new Aki( region );
+      await akinators[did].start();
+
+      res.write( JSON.stringify( { status: true, did: did, step: 0, progress: akinators[did].progress, question: akinators[did].question, answers: akinators[did].answers }, null, 2 ) );
+      res.end();
+    }else{
+      res.status( 400 );
+      res.write( JSON.stringify( { status: false, error: 'no akinator instance found.' }, null, 2 ) );
+      res.end();
+    }
+  }else{
+    res.status( 400 );
+    res.write( JSON.stringify( { status: false, error: 'no device id specified.' }, null, 2 ) );
+    res.end();
+  }
+});
+
 app.post( '/setcookie', async function( req, res ){
   res.contentType( 'application/json; charset=utf-8' );
 
   var did = req.body.did;
   //console.log( 'did = ' + did );
   if( did ){
-    if( !akinators[did] ){
-      akinators[did] = new Aki( region );
-    }
+    akinators[did] = new Aki( region );
     await akinators[did].start();
 
     var dt = new Date();
