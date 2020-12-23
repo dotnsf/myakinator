@@ -1,0 +1,190 @@
+swagger: '2.0'
+info:
+  description: My Akinator API ドキュメント
+  version: 0.0.1
+  title: My Akinator REST APIs
+host: localhost:8080
+basePath: /
+tags:
+  - name: akinator
+    description: Akinator related API
+schemes:
+  - http
+  - https
+paths:
+  /question:
+    get:
+      tags:
+        - akinator
+      summary: 質問取得
+      description: 質問取得
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /answers:
+    get:
+      tags:
+        - akinator
+      summary: 回答選択肢取得
+      description: 回答選択肢取得
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /step:
+    get:
+      tags:
+        - akinator
+      summary: 現時点でのステップ数取得
+      description: 現時点でのステップ数取得
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /progress:
+    get:
+      tags:
+        - akinator
+      summary: 現時点での自信度取得
+      description: 現時点での自信度取得
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /answer:
+    post:
+      tags:
+        - akinator
+      summary: 回答送信
+      description: 回答送信
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+        - name: answer
+          type: string
+          in: formData
+          description: 選択肢インデックス
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /start:
+    post:
+      tags:
+        - akinator
+      summary: 回答スタート
+      description: 回答スタート
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /stop:
+    post:
+      tags:
+        - akinator
+      summary: 回答終了
+      description: 回答終了
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /reset:
+    post:
+      tags:
+        - akinator
+      summary: 回答リセット
+      description: 回答リセット
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー
+  /setcookie:
+    post:
+      tags:
+        - akinator
+      summary: クッキー設定
+      description: クッキー設定
+      produces:
+        - application/json
+      parameters:
+        - name: did
+          type: string
+          in: query
+          description: device id
+          required: true
+      responses:
+        '200':
+          description: 成功
+        '400':
+          description: エラー

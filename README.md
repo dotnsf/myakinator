@@ -22,37 +22,18 @@ Sample web application for [Akinator API](https://github.com/jgoralcz/aki-api).
   - `$ npm install`
 
 
-## How to use CLI files
-
-### generate.js
-
-- Generate IBM Watson NLC corpus.
-- Run generate.js
-
-  - `$ node generate.js`
-
-### classsdify.js
-
-- Test your corpus.
-
-- Run classify.js
-
-  - `$ node classify.js [俳句のテキスト]`
-
-### delete.js
-
-- Delete your corpus.
-
-- Run delete.js
-
-  - `$ node delete.js`
-
-
 ## How to run web application
 
 - Run app.js
 
   - `$ node app.js`
+
+- Browse to `http://localhost:8080/`.
+
+
+## How to find Swagger API document
+
+- Browse to `http://localhost:8080/doc`.
 
 
 ## Reference
