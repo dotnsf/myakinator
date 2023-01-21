@@ -6,7 +6,7 @@ var express = require( 'express' ),
     app = express();
 
 var { Aki } = require( 'aki-api' );
-var region = 'jp';
+var region = { region: 'jp' };
 
 var settings = require( './settings' );
 
